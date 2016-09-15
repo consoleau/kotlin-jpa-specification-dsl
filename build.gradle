@@ -1,40 +1,25 @@
-
-buildscript {
-    ext.kotlin_version = '1.0.3'
-
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 plugins {
+    id 'nebula.kotlin' version '1.0.3'
     id 'nebula.project' version '3.3.0'
     id 'nebula.release' version '4.1.0'
     id 'nebula.maven-publish' version '4.9.1'
     id 'nebula.nebula-bintray' version '3.3.4'
 }
 
-apply plugin: 'kotlin'
-
 group 'au.com.console'
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
+// TODO java source version?
+
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // TODO identify exact dependencies
     compile 'org.springframework.boot:spring-boot-starter-data-jpa:1.3.5.RELEASE'
     testCompile 'com.h2database:h2:1.4.191'
     testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.5.RELEASE'
     testCompile 'junit:junit:4.12'
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = "3.0"
 }
 
 bintray {
@@ -51,4 +36,8 @@ bintray {
         issueTrackerUrl = "https://github.com/consoleau/${project.name}/issues"
         vcsUrl = "https://github.com/consoleau/${project.name}.git"
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "3.0"
 }
