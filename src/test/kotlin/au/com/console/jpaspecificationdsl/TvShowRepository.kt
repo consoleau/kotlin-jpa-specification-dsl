@@ -1,4 +1,4 @@
-package com.console.data.jpaspecificationsdsl
+package au.com.console.jpaspecificationdsl
 
 import org.springframework.data.jpa.domain.Specifications
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
