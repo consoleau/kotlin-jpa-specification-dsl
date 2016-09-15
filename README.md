@@ -1,4 +1,4 @@
-# Spring Data JPA Specification DSL for Kotlin #
+# Spring Data JPA Specification DSL for Kotlin [![Build Status](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl.svg?branch=master)](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl)
 
 This library provides a fluent DSL for querying spring data JPA repositories using spring data Specifications (i.e. the JPA Criteria API), without boilerplate code or a generated metamodel.
 
