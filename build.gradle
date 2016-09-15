@@ -19,7 +19,7 @@ plugins {
 
 apply plugin: 'kotlin'
 
-group 'com.console.data'
+group 'au.com.console'
 
 repositories {
     mavenCentral()
@@ -38,15 +38,15 @@ task wrapper(type: Wrapper) {
 }
 
 bintray {
-    user = "TODO"
-    key = "TODO"
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
     publications = ['nebula']
     pkg {
         repo = 'kotlin'
         userOrg = 'consoleau'
         name = 'kotlin-jpa-specification-dsl'
         licenses = ['Apache-2.0']
-        labels = ['gradle', 'nebula', 'test']
+        labels = ['kotlin','spring']
         websiteUrl = "https://github.com/consoleau/${project.name}"
         issueTrackerUrl = "https://github.com/consoleau/${project.name}/issues"
         vcsUrl = "https://github.com/consoleau/${project.name}.git"
