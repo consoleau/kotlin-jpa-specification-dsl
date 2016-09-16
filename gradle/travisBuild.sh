@@ -11,8 +11,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   ./gradlew build $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ]; then
   echo -e 'Build Branch with Snapshot => Branch ['$TRAVIS_BRANCH']'
-  #./gradlew -Prelease.travisci=true snapshot $SWITCHES
-  ./gradlew build $SWITCHES
+  ./gradlew -Prelease.travisci=true snapshot $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ]; then
   echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH']  Tag ['$TRAVIS_TAG']'
   case "$TRAVIS_TAG" in

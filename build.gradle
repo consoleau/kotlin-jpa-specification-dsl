@@ -24,6 +24,18 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+tasks.bintrayUpload.dependsOn tasks.check
+tasks.artifactoryPublish.dependsOn tasks.check
+
+gradle.taskGraph.whenReady { graph ->
+    tasks.bintrayUpload.onlyIf {
+        graph.hasTask(':final') || graph.hasTask(':candidate')
+    }
+    tasks.artifactoryPublish.onlyIf {
+        graph.hasTask(':snapshot') || graph.hasTask(':devSnapshot')
+    }
+}
+
 bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
