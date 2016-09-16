@@ -2,7 +2,7 @@
 # This script will build the project.
 # Based on https://github.com/nebula-plugins/nebula-kotlin-plugin/blob/master/gradle/buildViaTravis.sh
 
-SWITCHES="--info --stacktrace"
+SWITCHES="-x artifactoryPublish --info --stacktrace"
 
 GRADLE_VERSION=$(./gradlew -version | grep Gradle | cut -d ' ' -f 2)
 
@@ -11,8 +11,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   ./gradlew build $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ]; then
   echo -e 'Build Branch with Snapshot => Branch ['$TRAVIS_BRANCH']'
-  #./gradlew -Prelease.travisci=true snapshot $SWITCHES
-  ./gradlew build $SWITCHES
+  ./gradlew -Prelease.travisci=true snapshot $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ]; then
   echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH']  Tag ['$TRAVIS_TAG']'
   case "$TRAVIS_TAG" in

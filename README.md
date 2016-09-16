@@ -1,11 +1,26 @@
-# Spring Data JPA Specification DSL for Kotlin [![Build Status](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl.svg?branch=master)](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl)
+# Spring Data JPA Specification DSL for Kotlin 
+[![Build Status](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl.svg?branch=master)](https://travis-ci.org/consoleau/kotlin-jpa-specification-dsl) [ ![Download](https://api.bintray.com/packages/consoleau/kotlin/kotlin-jpa-specification-dsl/images/download.svg) ](https://bintray.com/consoleau/kotlin/kotlin-jpa-specification-dsl/_latestVersion)
 
 This library provides a fluent DSL for querying spring data JPA repositories using spring data Specifications (i.e. the JPA Criteria API), without boilerplate code or a generated metamodel.
 
+Hat tip to [Mike Buhot](https://github.com/mbuhot) for the initial implementation.
+
+# Quick Start
+
+```groovy
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile("au.com.console:kotlin-jpa-specification-dsl:0.1.0")
+}
+```
+
 # Example #
 
-```
-import com.console.specificationsdsl.*   // 1. Import Kotlin magic
+```kotlin
+import au.com.console.jpaspecificationsdsl.*   // 1. Import Kotlin magic
 
 ////
 // 2. Declare JPA Entities
@@ -55,7 +70,7 @@ class MyService @Inject constructor(val tvShowRepo: TvShowRepository) {
 For more complex and dynamic queries it's good practice to create functions that use the DSL to make queries more readable,
 and to allow for their composition in complex dynamic queries.
 
-```
+```kotlin
 fun hasName(name: String?): Specifications<TvShow>? = name?.let {
     TvShow::name.equal(it)
 }
@@ -75,7 +90,7 @@ fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
 
 These functions can be combined with and() and or() for complex nested queries:
 
-```
+```kotlin
     val shows = tvShowRepo.findAll(
             or(
                     and(
@@ -95,7 +110,7 @@ These functions can be combined with and() and or() for complex nested queries:
 
 Or they can be combined with a service-layer query DTO and mapping extension function
 
-```
+```kotlin
     /**
      * A TV show query DTO - typically used at the service layer.
      */
@@ -118,7 +133,7 @@ Or they can be combined with a service-layer query DTO and mapping extension fun
 
 for powerful dynamic queries:
 
-```
+```kotlin
     val query = TvShowQuery(availableOnNetflix = false, keywords = listOf("Rick", "Jimmy"))
     val shows = tvShowRepo.findAll(query.toSpecification())
 ```
@@ -131,7 +146,7 @@ This DSL builds on [Spring Data's Specifications abstraction](http://docs.spring
 
 The code `TvShow::releaseDate.equal("2010")` is a call to the Kotlin extension function:
 
-```
+```kotlin
 fun <T, R> KProperty1<T, R?>.equal(x: R): Specifications<T> = spec { equal(it, x) }
 ```
 
@@ -145,7 +160,7 @@ This is a bit dense, but makes sense when it's broken down:
 
 This is implemented using a private helper function `spec` that captures the common use case of taking an Entity property, and using a `CriteriaBuilder` to create a `Predicate`:
 
-```
+```kotlin
 private fun <T, R> KProperty1<T, R?>.spec(makePredicate: CriteriaBuilder.(path: Path<R>) -> Predicate): Specifications<T> =
     this.let { property -> where { root -> makePredicate(root.get(property)) } }
 ```
@@ -161,6 +176,6 @@ The `makePredicate` function passed to `spec` is an extension function on `Crite
 
 # Contributing to the Project #
 
-If you like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
+If you'd like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
 
 By contributing your code, you agree to license your contribution under the terms of the Apache License v2.0. 
