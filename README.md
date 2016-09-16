@@ -5,7 +5,7 @@ This library provides a fluent DSL for querying spring data JPA repositories usi
 
 # Quick Start
 
-```
+```groovy
 repositories {
     jcenter()
 }
@@ -17,7 +17,7 @@ dependencies {
 
 # Example #
 
-```
+```kotlin
 import au.com.console.jpaspecificationsdsl.*   // 1. Import Kotlin magic
 
 ////
@@ -68,7 +68,7 @@ class MyService @Inject constructor(val tvShowRepo: TvShowRepository) {
 For more complex and dynamic queries it's good practice to create functions that use the DSL to make queries more readable,
 and to allow for their composition in complex dynamic queries.
 
-```
+```kotlin
 fun hasName(name: String?): Specifications<TvShow>? = name?.let {
     TvShow::name.equal(it)
 }
@@ -88,7 +88,7 @@ fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
 
 These functions can be combined with and() and or() for complex nested queries:
 
-```
+```kotlin
     val shows = tvShowRepo.findAll(
             or(
                     and(
@@ -108,7 +108,7 @@ These functions can be combined with and() and or() for complex nested queries:
 
 Or they can be combined with a service-layer query DTO and mapping extension function
 
-```
+```kotlin
     /**
      * A TV show query DTO - typically used at the service layer.
      */
@@ -131,7 +131,7 @@ Or they can be combined with a service-layer query DTO and mapping extension fun
 
 for powerful dynamic queries:
 
-```
+```kotlin
     val query = TvShowQuery(availableOnNetflix = false, keywords = listOf("Rick", "Jimmy"))
     val shows = tvShowRepo.findAll(query.toSpecification())
 ```
@@ -144,7 +144,7 @@ This DSL builds on [Spring Data's Specifications abstraction](http://docs.spring
 
 The code `TvShow::releaseDate.equal("2010")` is a call to the Kotlin extension function:
 
-```
+```kotlin
 fun <T, R> KProperty1<T, R?>.equal(x: R): Specifications<T> = spec { equal(it, x) }
 ```
 
@@ -158,7 +158,7 @@ This is a bit dense, but makes sense when it's broken down:
 
 This is implemented using a private helper function `spec` that captures the common use case of taking an Entity property, and using a `CriteriaBuilder` to create a `Predicate`:
 
-```
+```kotlin
 private fun <T, R> KProperty1<T, R?>.spec(makePredicate: CriteriaBuilder.(path: Path<R>) -> Predicate): Specifications<T> =
     this.let { property -> where { root -> makePredicate(root.get(property)) } }
 ```
