@@ -3,6 +3,8 @@
 
 This library provides a fluent DSL for querying spring data JPA repositories using spring data Specifications (i.e. the JPA Criteria API), without boilerplate code or a generated metamodel.
 
+Hat tip to [Mike Buhot](https://github.com/mbuhot) for the initial implementation.
+
 # Quick Start
 
 ```groovy
