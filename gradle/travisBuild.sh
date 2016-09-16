@@ -2,7 +2,7 @@
 # This script will build the project.
 # Based on https://github.com/nebula-plugins/nebula-kotlin-plugin/blob/master/gradle/buildViaTravis.sh
 
-SWITCHES="--info --stacktrace"
+SWITCHES="-x artifactoryPublish --info --stacktrace"
 
 GRADLE_VERSION=$(./gradlew -version | grep Gradle | cut -d ' ' -f 2)
 
