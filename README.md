@@ -157,3 +157,10 @@ The code converts a `KProperty1<T,R>` to a `Path<T>` using `root.get<R>(property
 Once it has a `Path<R>` to work with, it delegates to the `makePredicate` function to configure the `CriteriaBuilder` given the `Path`.
 
 The `makePredicate` function passed to `spec` is an extension function on `CriteraiBuilder`. So when `equal(it, x)` is called from inside the `spec` block, it is invoking `CriteriaBuilder::equal`.
+
+
+# Contributing to the Project #
+
+If you like to contribute code to this project you can do so through GitHub by forking the repository and generating a pull request.
+
+By contributing your code, you agree to license your contribution under the terms of the Apache License v2.0. 
