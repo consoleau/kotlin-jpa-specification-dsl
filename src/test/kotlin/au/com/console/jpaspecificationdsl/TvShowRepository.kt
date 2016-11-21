@@ -44,14 +44,14 @@ fun availableOnNetflix(available: Boolean?): Specifications<TvShow>? = available
     TvShow::availableOnNetflix.equal(it)
 }
 
+fun hasReleaseDateIn(releaseDates: List<String>?): Specifications<TvShow>? = releaseDates?.let {
+    TvShow::releaseDate.`in`(releaseDates)
+}
+
 fun hasKeywordIn(keywords: List<String>?): Specifications<TvShow>? = keywords?.let {
-    or(keywords.map { hasKeyword(it) })
+    or(keywords.map(::hasKeyword))
 }
 
 fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
     TvShow::synopsis.like("%$keyword%")
 }
-
-
-
-

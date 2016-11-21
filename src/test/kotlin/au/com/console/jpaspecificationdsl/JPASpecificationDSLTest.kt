@@ -66,7 +66,8 @@ open class JPASpecificationDSLTest {
     data class TvShowQuery(
             val name: String? = null,
             val availableOnNetflix: Boolean? = null,
-            val keywords: List<String> = listOf()
+            val keywords: List<String> = listOf(),
+            val releaseDates: List<String> = listOf()
     )
 
     /**
@@ -76,7 +77,8 @@ open class JPASpecificationDSLTest {
     fun TvShowQuery.toSpecification(): Specifications<TvShow> = and(
             hasName(name),
             availableOnNetflix(availableOnNetflix),
-            hasKeywordIn(keywords)
+            hasKeywordIn(keywords),
+            hasReleaseDateIn(releaseDates)
     )
 
     /**
@@ -102,6 +104,12 @@ open class JPASpecificationDSLTest {
     fun `Get tv shows by id notEqual`() {
         val shows = tvShowRepo.findAll(TvShow::name.notEqual(theWalkingDead.name))
         assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove))
+    }
+
+    @Test
+    fun `Get tv show by id in`() {
+        val shows = tvShowRepo.findAll(TvShow::id.`in`(setOf(hemlockGrove.id, theWalkingDead.id)))
+        assertThat(shows, containsInAnyOrder(hemlockGrove, theWalkingDead))
     }
 
     @Test
