@@ -280,7 +280,7 @@ open class JPASpecificationDSLTest {
     fun `Find tv shows by multiple query DTOs`() {
         val queries = listOf(
                 TvShowQuery(availableOnNetflix = false, keywords = listOf("Jimmy")),
-                TvShowQuery(availableOnNetflix = true, keywords = listOf("killer", "monster"))
+                TvShowQuery(availableOnNetflix = true, keywords = listOf("killer", "monster"), releaseDates = listOf("2010", "2013"))
         )
         val shows = tvShowRepo.findAll(queries.toSpecification())
         assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove))
