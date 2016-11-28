@@ -81,8 +81,12 @@ fun availableOnNetflix(available: Boolean?): Specifications<TvShow>? = available
     TvShow::availableOnNetflix.equal(it)
 }
 
+fun hasReleaseDateIn(releaseDates: List<String>?): Specifications<TvShow>? = releaseDates?.let {
+    TvShow::releaseDate.`in`(releaseDates)
+}
+
 fun hasKeywordIn(keywords: List<String>?): Specifications<TvShow>? = keywords?.let {
-    or(keywords.map { hasKeyword(it) })
+    or(keywords.map(::hasKeyword))
 }
 
 fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
@@ -119,7 +123,8 @@ Or they can be combined with a service-layer query DTO and mapping extension fun
     data class TvShowQuery(
             val name: String? = null,
             val availableOnNetflix: Boolean? = null,
-            val keywords: List<String> = listOf()
+            val keywords: List<String> = listOf(),
+            val releaseDates: List<String> = listOf()
     )
 
     /**
@@ -129,7 +134,8 @@ Or they can be combined with a service-layer query DTO and mapping extension fun
     fun TvShowQuery.toSpecification(): Specifications<TvShow> = and(
             hasName(name),
             availableOnNetflix(availableOnNetflix),
-            hasKeywordIn(keywords)
+            hasKeywordIn(keywords),
+            hasReleaseDateIn(releaseDates)
     )
 ```
 
