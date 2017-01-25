@@ -22,7 +22,7 @@ dependencies {
 # Example #
 
 ```kotlin
-import au.com.console.jpaspecificationsdsl.*   // 1. Import Kotlin magic
+import au.com.console.jpaspecificationdsl.*   // 1. Import Kotlin magic
 
 ////
 // 2. Declare JPA Entities
