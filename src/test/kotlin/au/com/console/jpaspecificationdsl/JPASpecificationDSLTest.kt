@@ -13,6 +13,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration
 import org.springframework.data.jpa.domain.Specifications
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.transaction.annotation.Transactional
+import javax.persistence.EntityManager
+import javax.persistence.criteria.JoinType
 
 
 @RunWith(SpringJUnit4ClassRunner::class)
@@ -23,6 +25,9 @@ open class JPASpecificationDSLTest {
 
     @Autowired
     lateinit var tvShowRepo: TvShowRepository
+
+    @Autowired
+    lateinit var entityManager: EntityManager
 
     lateinit var hemlockGrove: TvShow
     lateinit var theWalkingDead: TvShow
@@ -53,6 +58,9 @@ open class JPASpecificationDSLTest {
                             synopsis = "The trials and tribulations of criminal lawyer, Jimmy McGill, in the time leading up to establishing his strip-mall law office in Albuquerque, New Mexico.",
                             starRatings = setOf(StarRating(stars = 4), StarRating(stars = 2))))
         }
+
+        // we don't want any caching - we want to see the queries!
+        entityManager.clear()
     }
 
     @After
@@ -257,9 +265,63 @@ open class JPASpecificationDSLTest {
     }
 
     @Test
-    fun `Test Join`() {
+    fun `Test Join - inner join`() {
         val shows = tvShowRepo.findAll(where { equal(it.join(TvShow::starRatings).get(StarRating::stars), 2) })
+        // should execute separate query for each rating
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
         assertThat(shows, containsInAnyOrder(betterCallSaul))
+    }
+
+    @Test
+    fun `Test Join - left join`() {
+        val shows = tvShowRepo.findAll(where { equal(it.join(TvShow::starRatings, JoinType.LEFT).get(StarRating::stars), 2) })
+        assertThat(shows, containsInAnyOrder(betterCallSaul))
+    }
+
+    @Test
+    fun `Test Fetch - left join`() {
+        val shows = tvShowRepo.findAll(where(applyQuery = { distinct(true) }) {
+            it.fetch(TvShow::starRatings, JoinType.LEFT)
+            and() // we need a predicate
+        })
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
+        assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove, theWalkingDead))
+    }
+
+    @Test
+    fun `Test Fetch - inner join`() {
+        val shows = tvShowRepo.findAll(where(applyQuery = { distinct(true) }) {
+            it.fetch(TvShow::starRatings)
+            and() // we need a predicate
+        })
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
+        assertThat(shows, containsInAnyOrder(betterCallSaul, theWalkingDead))
+    }
+
+    @Test
+    fun `Test Fetch - inner join via spec method`() {
+        val shows = tvShowRepo.findAll(fetchRatings())
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
+        assertThat(shows, containsInAnyOrder(betterCallSaul, theWalkingDead))
+    }
+
+    @Test
+    fun `Test Fetch - inner left join via spec method`() {
+        val shows = tvShowRepo.findAll(fetchRatings(excludeShowsWithoutRatings = false))
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
+        assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove, theWalkingDead))
+    }
+
+    @Test
+    fun `Test Fetch - inner join via spec method combined with another spec method`() {
+        val shows = tvShowRepo.findAll(
+                and(
+                        fetchRatings(), // this is a little strange, but it works!
+                        hasKeyword("dead")
+                )
+        )
+        shows.forEach { println("${it.name} has ratings ${it.starRatings.joinToString(",")}") }
+        assertThat(shows, containsInAnyOrder(theWalkingDead))
     }
 
     @Test

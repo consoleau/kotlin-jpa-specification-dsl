@@ -4,10 +4,8 @@ import org.springframework.data.jpa.domain.Specifications
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.OneToMany
+import javax.persistence.*
+import javax.persistence.criteria.JoinType
 
 @Repository
 interface TvShowRepository : CrudRepository<TvShow, Int>, JpaSpecificationExecutor<TvShow>
@@ -21,7 +19,8 @@ data class TvShow(
         val synopsis: String = "",
         val availableOnNetflix: Boolean = false,
         val releaseDate: String? = null,
-        @OneToMany(cascade = kotlin.arrayOf(javax.persistence.CascadeType.ALL))
+        @OneToMany(cascade = kotlin.arrayOf(javax.persistence.CascadeType.ALL), fetch = FetchType.LAZY)
+        @JoinColumn(name = "tv_show_id", nullable = false, updatable = false)
         val starRatings: Set<StarRating> = emptySet())
 
 @Entity
@@ -54,4 +53,9 @@ fun hasKeywordIn(keywords: List<String>?): Specifications<TvShow>? = keywords?.l
 
 fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
     TvShow::synopsis.like("%$keyword%")
+}
+
+fun fetchRatings(excludeShowsWithoutRatings: Boolean = true) : Specifications<TvShow> = where(applyQuery = { distinct(true) }) {
+    it.fetch(prop = TvShow::starRatings, joinType = if (excludeShowsWithoutRatings) JoinType.INNER else JoinType.LEFT)
+    and() // we need a predicate
 }
