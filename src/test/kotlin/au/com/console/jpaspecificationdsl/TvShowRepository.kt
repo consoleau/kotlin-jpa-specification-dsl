@@ -12,17 +12,21 @@ import javax.persistence.OneToMany
 @Repository
 interface TvShowRepository : CrudRepository<TvShow, Int>, JpaSpecificationExecutor<TvShow>
 
+interface HasName {
+    val name: String
+}
+
 @Entity
-data class TvShow(
+data class TvShow (
         @Id
         @GeneratedValue
         val id: Int = 0,
-        val name: String = "",
+        override val name: String = "",
         val synopsis: String = "",
         val availableOnNetflix: Boolean = false,
         val releaseDate: String? = null,
         @OneToMany(cascade = kotlin.arrayOf(javax.persistence.CascadeType.ALL))
-        val starRatings: Set<StarRating> = emptySet())
+        val starRatings: Set<StarRating> = emptySet()): HasName
 
 @Entity
 data class StarRating(
@@ -36,8 +40,8 @@ data class StarRating(
 // Note: these functions return null for a null input. This means that when included in
 // and() or or() they will be ignored as if they weren't supplied.
 
-fun hasName(name: String?): Specifications<TvShow>? = name?.let {
-    TvShow::name.equal(it)
+fun hasName(name: String?): Specifications<HasName>? = name?.let {
+    HasName::name.equal(it)
 }
 
 fun availableOnNetflix(available: Boolean?): Specifications<TvShow>? = available?.let {

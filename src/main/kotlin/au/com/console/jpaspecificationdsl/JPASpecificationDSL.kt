@@ -60,20 +60,22 @@ fun <T> KProperty1<T, String?>.notLike(x: String): Specifications<T> = spec { no
 fun <T> KProperty1<T, String?>.notLike(x: String, escapeChar: Char): Specifications<T> = spec { notLike(it, x, escapeChar) }
 
 // And
-infix fun <T> Specifications<T>.and(other: Specification<T>) = this.and(other)
-inline fun <reified T> and(vararg specs: Specifications<T>?): Specifications<T> {
+@Suppress("UNCHECKED_CAST")
+infix fun <T> Specifications<T>.and(other: Specification<in T>) = this.and(other as Specification<T>)
+inline fun <reified T> and(vararg specs: Specifications<in T>?): Specifications<T> {
     return and(specs.toList())
 }
-inline fun <reified T> and(specs: Iterable<Specifications<T>?>): Specifications<T> {
+inline fun <reified T> and(specs: Iterable<Specifications<in T>?>): Specifications<T> {
     return combineSpecifications(specs, Specifications<T>::and)
 }
 
 // Or
-infix fun <T> Specifications<T>.or(other: Specification<T>) = this.or(other)
-inline fun <reified T> or(vararg specs: Specifications<T>?): Specifications<T> {
+@Suppress("UNCHECKED_CAST")
+infix fun <T> Specifications<T>.or(other: Specification<in T>) = this.or(other as Specification<T>)
+inline fun <reified T> or(vararg specs: Specifications<in T>?): Specifications<T> {
     return or(specs.toList())
 }
-inline fun <reified T> or(specs: Iterable<Specifications<T>?>): Specifications<T> {
+inline fun <reified T> or(specs: Iterable<Specifications<in T>?>): Specifications<T> {
     return combineSpecifications(specs, Specifications<T>::or)
 }
 
@@ -81,8 +83,11 @@ inline fun <reified T> or(specs: Iterable<Specifications<T>?>): Specifications<T
 operator fun <T> Specifications<T>.not() = Specifications.not(this)
 
 // Combines Specifications with an operation
-inline fun <reified T> combineSpecifications(specs: Iterable<Specification<T>?>, operation: Specifications<T>.(Specification<T>) -> Specifications<T>): Specifications<T> {
-    return specs.filterNotNull().fold(emptySpecification<T>()) { existing, new -> existing.operation(new) }
+inline fun <reified T> combineSpecifications(specs: Iterable<Specification<in T>?>, operation: Specifications<T>.(Specification<T>) -> Specifications<T>): Specifications<T> {
+    return specs.filterNotNull().fold(emptySpecification()) { existing, new ->
+        @Suppress("UNCHECKED_CAST")
+        existing.operation(new as Specification<T>)
+    }
 }
 
 // Empty Specification
