@@ -1,9 +1,9 @@
 plugins {
-    id 'nebula.kotlin' version '1.0.3'
-    id 'nebula.project' version '3.3.0'
-    id 'nebula.release' version '4.1.0'
-    id 'nebula.maven-publish' version '4.9.1'
-    id 'nebula.nebula-bintray' version '3.3.4'
+    id 'nebula.kotlin' version '1.2.21'
+    id 'nebula.project' version '3.4.0'
+    id 'nebula.release' version '6.3.0'
+    id 'nebula.maven-publish' version '7.0.1'
+    id 'nebula.nebula-bintray' version '3.5.2'
 }
 
 group 'au.com.console'
@@ -53,5 +53,5 @@ bintray {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "3.0"
+    gradleVersion = "4.5.1"
 }

@@ -13,7 +13,7 @@ fun <R> Path<*>.get(prop: KProperty1<*, R?>): Path<R> = this.get<R>(prop.name)
 
 // Version of Specifications.where that makes the CriteriaBuilder implicit
 fun <T> where(makePredicate: CriteriaBuilder.(Root<T>) -> Predicate): Specifications<T> =
-        Specifications.where<T> { root, criteriaQuery, criteriaBuilder -> criteriaBuilder.makePredicate(root) }
+        Specifications.where<T> { root, _, criteriaBuilder -> criteriaBuilder.makePredicate(root) }
 
 // helper function for defining Specifications that take a Path to a property and send it to a CriteriaBuilder
 private fun <T, R> KProperty1<T, R?>.spec(makePredicate: CriteriaBuilder.(path: Path<R>) -> Predicate): Specifications<T> =
@@ -60,7 +60,7 @@ fun <T> KProperty1<T, String?>.notLike(x: String): Specifications<T> = spec { no
 fun <T> KProperty1<T, String?>.notLike(x: String, escapeChar: Char): Specifications<T> = spec { notLike(it, x, escapeChar) }
 
 // And
-infix fun <T> Specifications<T>.and(other: Specification<T>) = this.and(other)
+infix fun <T> Specifications<T>.and(other: Specification<T>): Specifications<T> = this.and(other)
 inline fun <reified T> and(vararg specs: Specifications<T>?): Specifications<T> {
     return and(specs.toList())
 }
@@ -69,7 +69,7 @@ inline fun <reified T> and(specs: Iterable<Specifications<T>?>): Specifications<
 }
 
 // Or
-infix fun <T> Specifications<T>.or(other: Specification<T>) = this.or(other)
+infix fun <T> Specifications<T>.or(other: Specification<T>) : Specifications<T> = this.or(other)
 inline fun <reified T> or(vararg specs: Specifications<T>?): Specifications<T> {
     return or(specs.toList())
 }
@@ -78,11 +78,11 @@ inline fun <reified T> or(specs: Iterable<Specifications<T>?>): Specifications<T
 }
 
 // Not
-operator fun <T> Specifications<T>.not() = Specifications.not(this)
+operator fun <T> Specifications<T>.not(): Specifications<T> = Specifications.not(this)
 
 // Combines Specifications with an operation
 inline fun <reified T> combineSpecifications(specs: Iterable<Specification<T>?>, operation: Specifications<T>.(Specification<T>) -> Specifications<T>): Specifications<T> {
-    return specs.filterNotNull().fold(emptySpecification<T>()) { existing, new -> existing.operation(new) }
+    return specs.filterNotNull().fold(emptySpecification()) { existing, new -> existing.operation(new) }
 }
 
 // Empty Specification
