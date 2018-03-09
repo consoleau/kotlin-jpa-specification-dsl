@@ -58,6 +58,10 @@ fun <T> KProperty1<T, String?>.like(x: String): Specifications<T> = spec { like(
 fun <T> KProperty1<T, String?>.like(x: String, escapeChar: Char): Specifications<T> = spec { like(it, x, escapeChar) }
 fun <T> KProperty1<T, String?>.notLike(x: String): Specifications<T> = spec { notLike(it, x) }
 fun <T> KProperty1<T, String?>.notLike(x: String, escapeChar: Char): Specifications<T> = spec { notLike(it, x, escapeChar) }
+fun <T> KProperty1<T, String?>.likeIgnoreCase(x: String): Specifications<T> = spec { like(lower(it), x.toLowerCase()) }
+fun <T> KProperty1<T, String?>.likeIgnoreCase(x: String, escapeChar: Char): Specifications<T> = spec { like(lower(it), x.toLowerCase(), escapeChar) }
+fun <T> KProperty1<T, String?>.notLikeIgnoreCase(x: String): Specifications<T> = spec { notLike(lower(it), x.toLowerCase()) }
+fun <T> KProperty1<T, String?>.notLikeIgnoreCase(x: String, escapeChar: Char): Specifications<T> = spec { notLike(lower(it), x.toLowerCase(), escapeChar) }
 
 // And
 infix fun <T> Specifications<T>.and(other: Specification<T>): Specifications<T> = this.and(other)
