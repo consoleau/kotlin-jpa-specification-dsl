@@ -221,8 +221,20 @@ open class JPASpecificationDSLTest {
     }
 
     @Test
+    fun `Get a tv show by name likeIgnoreCase`() {
+        val shows = tvShowRepo.findAll(TvShow::name.likeIgnoreCase("THE%"))
+        assertThat(shows, containsInAnyOrder(theWalkingDead))
+    }
+
+    @Test
     fun `Get a tv show by synopsis like with escape char`() {
         val shows = tvShowRepo.findAll(TvShow::synopsis.like("%them\\?", escapeChar = '\\'))
+        assertThat(shows, containsInAnyOrder(hemlockGrove))
+    }
+
+    @Test
+    fun `Get a tv show by synopsis likeIgnoreCase with escape char`() {
+        val shows = tvShowRepo.findAll(TvShow::synopsis.likeIgnoreCase("%THEM\\?", escapeChar = '\\'))
         assertThat(shows, containsInAnyOrder(hemlockGrove))
     }
 
@@ -233,9 +245,21 @@ open class JPASpecificationDSLTest {
     }
 
     @Test
+    fun `Get a tv show by name notLikeIgnoreCase`() {
+        val shows = tvShowRepo.findAll(TvShow::name.notLikeIgnoreCase("THE %"))
+        assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove))
+    }
+
+    @Test
     fun `Get a tv show by synopsis notLike with escape char`() {
         val shows = tvShowRepo.findAll(TvShow::synopsis.notLike("%\\.", escapeChar = '\\'))
         assertThat(shows, containsInAnyOrder(hemlockGrove))
+    }
+
+    @Test
+    fun `Get a tv show by synopsis notLikeIgnoreCase with escape char`() {
+        val shows = tvShowRepo.findAll(TvShow::synopsis.notLikeIgnoreCase("%MEXICO\\.", escapeChar = '\\'))
+        assertThat(shows, containsInAnyOrder(hemlockGrove, theWalkingDead))
     }
 
     @Test
