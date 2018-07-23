@@ -300,6 +300,12 @@ open class JPASpecificationDSLTest {
     }
 
     @Test
+    fun `Find all - empty specification`() {
+        val shows = tvShowRepo.findAll(emptySpecification())
+        assertThat(shows, containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+    }
+
+    @Test
     fun `Find tv shows by complex inlined query`() {
         val shows = tvShowRepo.findAll(
                 or(
