@@ -9,14 +9,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.data.jpa.domain.Specifications
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.transaction.annotation.Transactional
 
-
-@RunWith(SpringJUnit4ClassRunner::class)
-@SpringApplicationConfiguration(classes = arrayOf(JPASpecificationDSLTest::class))
+@RunWith(SpringRunner::class)
 @SpringBootApplication
 @Transactional
 open class JPASpecificationDSLTest {
@@ -74,7 +71,7 @@ open class JPASpecificationDSLTest {
      * A single TvShowQuery is equivalent to an AND of all supplied criteria.
      * Note: any criteria that is null will be ignored (not included in the query).
      */
-    fun TvShowQuery.toSpecification(): Specifications<TvShow> = and(
+    fun TvShowQuery.toSpecification(): Specification<TvShow> = and(
             hasName(name),
             availableOnNetflix(availableOnNetflix),
             hasKeywordIn(keywords),
@@ -84,20 +81,20 @@ open class JPASpecificationDSLTest {
     /**
      * A collection of TvShowQueries is equivalent to an OR of all the queries in the collection.
      */
-    fun Iterable<TvShowQuery>.toSpecification(): Specifications<TvShow> = or(
+    fun Iterable<TvShowQuery>.toSpecification(): Specification<TvShow> = or(
             map { query -> query.toSpecification() }
     )
 
     @Test
     fun `Get a tv show by id`() {
-        val show = tvShowRepo.findOne(hemlockGrove.id)
+        val show = tvShowRepo.getOne(hemlockGrove.id)
         assertThat(show, equalTo(hemlockGrove))
     }
 
     @Test
     fun `Get a tv show by id equality`() {
         val show = tvShowRepo.findOne(TvShow::id.equal(theWalkingDead.id))
-        assertThat(show, equalTo(theWalkingDead))
+        assertThat(show.get(), equalTo(theWalkingDead))
     }
 
     @Test

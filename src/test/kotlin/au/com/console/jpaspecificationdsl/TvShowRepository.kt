@@ -1,8 +1,8 @@
 package au.com.console.jpaspecificationdsl
 
-import org.springframework.data.jpa.domain.Specifications
+import org.springframework.data.jpa.domain.Specification
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor
-import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
@@ -10,7 +10,7 @@ import javax.persistence.Id
 import javax.persistence.OneToMany
 
 @Repository
-interface TvShowRepository : CrudRepository<TvShow, Int>, JpaSpecificationExecutor<TvShow>
+interface TvShowRepository : JpaRepository<TvShow, Int>, JpaSpecificationExecutor<TvShow>
 
 @Entity
 data class TvShow(
@@ -36,22 +36,22 @@ data class StarRating(
 // Note: these functions return null for a null input. This means that when included in
 // and() or or() they will be ignored as if they weren't supplied.
 
-fun hasName(name: String?): Specifications<TvShow>? = name?.let {
+fun hasName(name: String?): Specification<TvShow>? = name?.let {
     TvShow::name.equal(it)
 }
 
-fun availableOnNetflix(available: Boolean?): Specifications<TvShow>? = available?.let {
+fun availableOnNetflix(available: Boolean?): Specification<TvShow>? = available?.let {
     TvShow::availableOnNetflix.equal(it)
 }
 
-fun hasReleaseDateIn(releaseDates: List<String>?): Specifications<TvShow>? = releaseDates?.let {
+fun hasReleaseDateIn(releaseDates: List<String>?): Specification<TvShow>? = releaseDates?.let {
     TvShow::releaseDate.`in`(releaseDates)
 }
 
-fun hasKeywordIn(keywords: List<String>?): Specifications<TvShow>? = keywords?.let {
+fun hasKeywordIn(keywords: List<String>?): Specification<TvShow>? = keywords?.let {
     or(keywords.map(::hasKeyword))
 }
 
-fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
+fun hasKeyword(keyword: String?): Specification<TvShow>? = keyword?.let {
     TvShow::synopsis.like("%$keyword%")
 }
