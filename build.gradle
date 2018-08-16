@@ -17,12 +17,14 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     compile("org.jetbrains.kotlin:kotlin-reflect:1.2.41")
-    compile 'org.springframework.data:spring-data-jpa:2.0.8.RELEASE'
+    compile 'org.springframework.data:spring-data-jpa:2.0.9.RELEASE'
     compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
-    testCompile 'org.springframework.boot:spring-boot-starter-data-jpa:2.0.3.RELEASE'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-data-jpa:2.0.4.RELEASE'
     testCompile 'com.h2database:h2:1.4.191'
-    testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.3.RELEASE'
-    testCompile 'junit:junit:4.12'
+    testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.4.RELEASE'
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.2.0")
 }
 
 tasks.bintrayUpload.dependsOn tasks.check
@@ -56,5 +58,5 @@ bintray {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = "4.5.1"
+    distributionUrl = "https://nexus.ops.console.com.au/repository/gradle-distributions/gradle-4.7-bin.zip"
 }

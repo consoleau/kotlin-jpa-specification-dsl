@@ -1,19 +1,19 @@
 package au.com.console.jpaspecificationdsl
 
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.Test
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.transaction.annotation.Transactional
 
-@RunWith(SpringRunner::class)
+@ExtendWith(SpringExtension::class)
 @SpringBootApplication
 @Transactional
 open class JPASpecificationDSLTest {
@@ -25,7 +25,7 @@ open class JPASpecificationDSLTest {
     lateinit var theWalkingDead: TvShow
     lateinit var betterCallSaul: TvShow
 
-    @Before
+    @BeforeEach
     fun setup() {
         with(tvShowRepo) {
             hemlockGrove = save(
@@ -52,7 +52,7 @@ open class JPASpecificationDSLTest {
         }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         tvShowRepo.deleteAll()
     }
