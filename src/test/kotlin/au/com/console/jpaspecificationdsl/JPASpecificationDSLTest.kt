@@ -301,8 +301,11 @@ open class JPASpecificationDSLTest {
 
     @Test
     fun `Find all - empty specification`() {
-        val shows = tvShowRepo.findAll(emptySpecification())
-        assertThat(shows, containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+        assertThat(tvShowRepo.findAll(emptySpecification()), containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+
+        assertThat(tvShowRepo.findAll(TvShow::id.`in`(emptySet())),
+            containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+
     }
 
     @Test

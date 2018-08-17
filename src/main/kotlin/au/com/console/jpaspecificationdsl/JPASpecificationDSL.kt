@@ -25,7 +25,7 @@ fun <T, R> KProperty1<T, R?>.notEqual(x: R): Specification<T> = spec { notEqual(
 // Ignores empty collection otherwise an empty 'in' predicate will be generated which will never match any results
 fun <T, R: Any> KProperty1<T, R?>.`in`(values: Collection<R>): Specification<T> = if (values.isNotEmpty()) spec { path ->
     `in`(path).apply { values.forEach { this.value(it) } }
-} else Specification.where<T>(null)
+} else Specification.where<T> { _, _, _ -> null}
 
 // Comparison
 fun <T> KProperty1<T, Number?>.le(x: Number) = spec { le(it, x) }
@@ -80,9 +80,10 @@ inline fun <reified T> or(specs: Iterable<Specification<T>?>): Specification<T> 
 operator fun <T> Specification<T>.not(): Specification<T> = Specification.not(this)
 
 // Combines Specification with an operation
-inline fun <reified T> combineSpecifications(specs: Iterable<Specification<T>?>, operation: Specification<T>.(Specification<T>) -> Specification<T>): Specification<T> {
+inline fun <reified T> combineSpecifications(specs: Iterable<Specification<T>?>, operation: Specification<T>.(Specification<T>) -> Specification<T>)
+    : Specification<T> {
     return specs.filterNotNull().fold(emptySpecification()) { existing, new -> existing.operation(new) }
 }
 
 // Empty Specification
-inline fun <reified T> emptySpecification(): Specification<T> = Specification.where<T>(null)
+inline fun <reified T> emptySpecification(): Specification<T> = Specification.where { _, _, _ -> null}
