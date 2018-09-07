@@ -1,22 +1,19 @@
 package au.com.console.jpaspecificationdsl
 
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.Test
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.test.SpringApplicationConfiguration
-import org.springframework.data.jpa.domain.Specifications
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.transaction.annotation.Transactional
 
-
-@RunWith(SpringJUnit4ClassRunner::class)
-@SpringApplicationConfiguration(classes = arrayOf(JPASpecificationDSLTest::class))
+@ExtendWith(SpringExtension::class)
 @SpringBootApplication
 @Transactional
 open class JPASpecificationDSLTest {
@@ -28,7 +25,7 @@ open class JPASpecificationDSLTest {
     lateinit var theWalkingDead: TvShow
     lateinit var betterCallSaul: TvShow
 
-    @Before
+    @BeforeEach
     fun setup() {
         with(tvShowRepo) {
             hemlockGrove = save(
@@ -55,7 +52,7 @@ open class JPASpecificationDSLTest {
         }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         tvShowRepo.deleteAll()
     }
@@ -74,7 +71,7 @@ open class JPASpecificationDSLTest {
      * A single TvShowQuery is equivalent to an AND of all supplied criteria.
      * Note: any criteria that is null will be ignored (not included in the query).
      */
-    fun TvShowQuery.toSpecification(): Specifications<TvShow> = and(
+    fun TvShowQuery.toSpecification(): Specification<TvShow> = and(
             hasName(name),
             availableOnNetflix(availableOnNetflix),
             hasKeywordIn(keywords),
@@ -84,20 +81,20 @@ open class JPASpecificationDSLTest {
     /**
      * A collection of TvShowQueries is equivalent to an OR of all the queries in the collection.
      */
-    fun Iterable<TvShowQuery>.toSpecification(): Specifications<TvShow> = or(
+    fun Iterable<TvShowQuery>.toSpecification(): Specification<TvShow> = or(
             map { query -> query.toSpecification() }
     )
 
     @Test
     fun `Get a tv show by id`() {
-        val show = tvShowRepo.findOne(hemlockGrove.id)
+        val show = tvShowRepo.getOne(hemlockGrove.id)
         assertThat(show, equalTo(hemlockGrove))
     }
 
     @Test
     fun `Get a tv show by id equality`() {
         val show = tvShowRepo.findOne(TvShow::id.equal(theWalkingDead.id))
-        assertThat(show, equalTo(theWalkingDead))
+        assertThat(show.get(), equalTo(theWalkingDead))
     }
 
     @Test
@@ -300,6 +297,15 @@ open class JPASpecificationDSLTest {
                 hasKeywordIn(listOf("Rick", "Jimmy"))
         ))
         assertThat(shows, containsInAnyOrder(betterCallSaul, theWalkingDead))
+    }
+
+    @Test
+    fun `Find all - empty specification`() {
+        assertThat(tvShowRepo.findAll(emptySpecification()), containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+
+        assertThat(tvShowRepo.findAll(TvShow::id.`in`(emptySet())),
+            containsInAnyOrder(betterCallSaul, theWalkingDead, hemlockGrove))
+
     }
 
     @Test
