@@ -58,5 +58,5 @@ bintray {
 }
 
 task wrapper(type: Wrapper) {
-    distributionUrl = "https://nexus.ops.console.com.au/repository/gradle-distributions/gradle-4.7-bin.zip"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-4.7-bin.zip"
 }
