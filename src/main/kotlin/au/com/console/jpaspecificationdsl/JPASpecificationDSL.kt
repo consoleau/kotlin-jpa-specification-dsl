@@ -56,6 +56,8 @@ fun <T, E, R : Collection<E>> KProperty1<T, R?>.isNotMember(elem: E) = spec { is
 // Strings
 fun <T> KProperty1<T, String?>.like(x: String): Specifications<T> = spec { like(it, x) }
 fun <T> KProperty1<T, String?>.like(x: String, escapeChar: Char): Specifications<T> = spec { like(it, x, escapeChar) }
+fun <T> KProperty1<T, String?>.ilike(x: String): Specifications<T> = spec { like(lower(it), x.toLowerCase()) }
+fun <T> KProperty1<T, String?>.ilike(x: String, escapeChar: Char): Specifications<T> = spec { like(lower(it), x.toLowerCase(), escapeChar) }
 fun <T> KProperty1<T, String?>.notLike(x: String): Specifications<T> = spec { notLike(it, x) }
 fun <T> KProperty1<T, String?>.notLike(x: String, escapeChar: Char): Specifications<T> = spec { notLike(it, x, escapeChar) }
 

@@ -227,6 +227,18 @@ open class JPASpecificationDSLTest {
     }
 
     @Test
+    fun `Get a tv show by name like case insensitive`() {
+        val shows = tvShowRepo.findAll(TvShow::name.ilike("the%"))
+        assertThat(shows, containsInAnyOrder(theWalkingDead))
+    }
+
+    @Test
+    fun `Get a tv show by synopsis like with escape char case insensitive`() {
+        val shows = tvShowRepo.findAll(TvShow::synopsis.ilike("%Them\\?", escapeChar = '\\'))
+        assertThat(shows, containsInAnyOrder(hemlockGrove))
+    }
+
+    @Test
     fun `Get a tv show by name notLike`() {
         val shows = tvShowRepo.findAll(TvShow::name.notLike("The %"))
         assertThat(shows, containsInAnyOrder(betterCallSaul, hemlockGrove))
