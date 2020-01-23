@@ -1,9 +1,10 @@
+
 plugins {
-    id 'nebula.kotlin' version '1.2.21'
-    id 'nebula.project' version '3.4.0'
-    id 'nebula.release' version '6.3.0'
-    id 'nebula.maven-publish' version '7.0.1'
-    id 'nebula.nebula-bintray' version '3.5.2'
+    id 'nebula.project' version '7.0.5'
+    id 'nebula.release' version '14.0.2'
+    id 'nebula.kotlin' version '1.3.61'
+    id 'nebula.maven-publish' version '14.1.1'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
 group 'au.com.console'
@@ -16,23 +17,29 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    compile 'org.springframework.data:spring-data-jpa:1.10.2.RELEASE'
-    compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
-    testCompile 'org.springframework.boot:spring-boot-starter-data-jpa:1.3.5.RELEASE'
-    testCompile 'com.h2database:h2:1.4.191'
-    testCompile 'org.springframework.boot:spring-boot-starter-test:1.3.5.RELEASE'
-    testCompile 'junit:junit:4.12'
+    api 'org.jetbrains.kotlin:kotlin-reflect'
+    api 'org.springframework.data:spring-data-jpa:2.2.4.RELEASE'
+    compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
+    testApi 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.2.RELEASE'
+    testApi 'com.h2database:h2:1.4.191'
+    testApi 'org.springframework.boot:spring-boot-starter-test:2.2.4.RELEASE'
+    testApi 'org.junit.jupiter:junit-jupiter-api:5.5.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        setExceptionFormat("full")
+    }
 }
 
 tasks.bintrayUpload.dependsOn tasks.check
-tasks.artifactoryPublish.dependsOn tasks.check
 
 gradle.taskGraph.whenReady { graph ->
     tasks.bintrayUpload.onlyIf {
         graph.hasTask(':final') || graph.hasTask(':candidate')
-    }
-    tasks.artifactoryPublish.onlyIf {
-        graph.hasTask(':snapshot') || graph.hasTask(':devSnapshot')
     }
 }
 
@@ -52,8 +59,4 @@ bintray {
         issueTrackerUrl = "https://github.com/consoleau/${project.name}/issues"
         vcsUrl = "https://github.com/consoleau/${project.name}.git"
     }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = "4.5.1"
 }
