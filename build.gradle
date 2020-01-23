@@ -29,6 +29,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+        setExceptionFormat("full")
+    }
 }
 
 tasks.bintrayUpload.dependsOn tasks.check

@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile("au.com.console:kotlin-jpa-specification-dsl:0.1.0")
+    compile("au.com.console:kotlin-jpa-specification-dsl:2.0.0")
 }
 ```
 
@@ -73,23 +73,23 @@ For more complex and dynamic queries it's good practice to create functions that
 and to allow for their composition in complex dynamic queries.
 
 ```kotlin
-fun hasName(name: String?): Specifications<TvShow>? = name?.let {
+fun hasName(name: String?): Specification<TvShow>? = name?.let {
     TvShow::name.equal(it)
 }
 
-fun availableOnNetflix(available: Boolean?): Specifications<TvShow>? = available?.let {
+fun availableOnNetflix(available: Boolean?): Specification<TvShow>? = available?.let {
     TvShow::availableOnNetflix.equal(it)
 }
 
-fun hasReleaseDateIn(releaseDates: List<String>?): Specifications<TvShow>? = releaseDates?.let {
+fun hasReleaseDateIn(releaseDates: List<String>?): Specification<TvShow>? = releaseDates?.let {
     TvShow::releaseDate.`in`(releaseDates)
 }
 
-fun hasKeywordIn(keywords: List<String>?): Specifications<TvShow>? = keywords?.let {
+fun hasKeywordIn(keywords: List<String>?): Specification<TvShow>? = keywords?.let {
     or(keywords.map(::hasKeyword))
 }
 
-fun hasKeyword(keyword: String?): Specifications<TvShow>? = keyword?.let {
+fun hasKeyword(keyword: String?): Specification<TvShow>? = keyword?.let {
     TvShow::synopsis.like("%$keyword%")
 }
 ```
@@ -131,7 +131,7 @@ Or they can be combined with a service-layer query DTO and mapping extension fun
      * A single TvShowQuery is equivalent to an AND of all supplied criteria.
      * Note: any criteria that is null will be ignored (not included in the query).
      */
-    fun TvShowQuery.toSpecification(): Specifications<TvShow> = and(
+    fun TvShowQuery.toSpecification(): Specification<TvShow> = and(
             hasName(name),
             availableOnNetflix(availableOnNetflix),
             hasKeywordIn(keywords),
@@ -155,7 +155,7 @@ This DSL builds on [Spring Data's Specifications abstraction](http://docs.spring
 The code `TvShow::releaseDate.equal("2010")` is a call to the Kotlin extension function:
 
 ```kotlin
-fun <T, R> KProperty1<T, R?>.equal(x: R): Specifications<T> = spec { equal(it, x) }
+fun <T, R> KProperty1<T, R?>.equal(x: R): Specification<T> = spec { equal(it, x) }
 ```
 
 This is a bit dense, but makes sense when it's broken down:
@@ -164,12 +164,12 @@ This is a bit dense, but makes sense when it's broken down:
 - `R`: The property type, for TvShow::releaseDate it is String
 - `KProperty1<T,R?>`: Kotlin reflection API representation of the property `TvShow::releaseDate`. The 1 refers to a property with 1 receiver, and `R?` is declared as nullable for the method to work on nullable properties as well as non-null properties.
 - `x`: The value to test against
-- `Specifications<T>`: The Spring data specifications result
+- `Specification<T>`: The Spring data specifications result
 
 This is implemented using a private helper function `spec` that captures the common use case of taking an Entity property, and using a `CriteriaBuilder` to create a `Predicate`:
 
 ```kotlin
-private fun <T, R> KProperty1<T, R?>.spec(makePredicate: CriteriaBuilder.(path: Path<R>) -> Predicate): Specifications<T> =
+private fun <T, R> KProperty1<T, R?>.spec(makePredicate: CriteriaBuilder.(path: Path<R>) -> Predicate): Specification<T> =
     this.let { property -> where { root -> makePredicate(root.get(property)) } }
 ```
 
