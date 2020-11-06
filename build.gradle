@@ -2,7 +2,7 @@
 plugins {
     id 'nebula.project' version '7.0.5'
     id 'nebula.release' version '14.0.2'
-    id 'nebula.kotlin' version '1.3.61'
+    id 'nebula.kotlin' version '1.3.72'
     id 'nebula.maven-publish' version '14.1.1'
     id 'com.jfrog.bintray' version '1.8.4'
 }
@@ -18,11 +18,11 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     api 'org.jetbrains.kotlin:kotlin-reflect'
-    api 'org.springframework.data:spring-data-jpa:2.2.4.RELEASE'
-    compileOnly 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
-    testApi 'org.springframework.boot:spring-boot-starter-data-jpa:2.2.2.RELEASE'
+    api 'org.springframework.data:spring-data-jpa:2.3.0.RELEASE'
+    compileOnly 'jakarta.persistence:jakarta.persistence-api:2.2.3'
+    testApi 'org.springframework.boot:spring-boot-starter-data-jpa:2.3.0.RELEASE'
     testApi 'com.h2database:h2:1.4.191'
-    testApi 'org.springframework.boot:spring-boot-starter-test:2.2.4.RELEASE'
+    testApi 'org.springframework.boot:spring-boot-starter-test:2.3.0.RELEASE'
     testApi 'org.junit.jupiter:junit-jupiter-api:5.5.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 }
