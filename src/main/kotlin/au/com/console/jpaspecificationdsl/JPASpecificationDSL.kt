@@ -2,10 +2,17 @@ package au.com.console.jpaspecificationdsl
 
 import org.springframework.data.jpa.domain.Specification
 import javax.persistence.criteria.*
+import javax.persistence.criteria.JoinType.INNER
+import javax.persistence.criteria.JoinType.LEFT
+import javax.persistence.criteria.JoinType.RIGHT
 import kotlin.reflect.KProperty1
 
 // Helper to allow joining to Properties
 fun <Z, T, R> From<Z, T>.join(prop: KProperty1<T, R?>): Join<T, R> = this.join<T, R>(prop.name)
+fun <Z, T, R> From<Z, T>.join(prop: KProperty1<T, R?>, joinType: JoinType): Join<T, R> = this.join<T, R>(prop.name, joinType)
+fun <Z, T, R> From<Z, T>.innerJoin(prop: KProperty1<T, R?>): Join<T, R> = join(prop, INNER)
+fun <Z, T, R> From<Z, T>.leftJoin(prop: KProperty1<T, R?>): Join<T, R> = join(prop, LEFT)
+fun <Z, T, R> From<Z, T>.rightJoin(prop: KProperty1<T, R?>): Join<T, R> = join(prop, RIGHT)
 
 // Helper to enable get by Property
 fun <R> Path<*>.get(prop: KProperty1<*, R?>): Path<R> = this.get<R>(prop.name)
