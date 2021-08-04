@@ -4,7 +4,7 @@ plugins {
     id 'nebula.release' version '14.0.2'
     id 'nebula.kotlin' version '1.3.72'
     id 'nebula.maven-publish' version '14.1.1'
-    id 'com.jfrog.bintray' version '1.8.4'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
 group 'au.com.console'
@@ -35,28 +35,11 @@ test {
     }
 }
 
-tasks.bintrayUpload.dependsOn tasks.check
-
-gradle.taskGraph.whenReady { graph ->
-    tasks.bintrayUpload.onlyIf {
-        graph.hasTask(':final') || graph.hasTask(':candidate')
-    }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['nebula']
-    // allow republshing in case bintray fails to upload properly
-    override = true
-    pkg {
-        repo = 'kotlin'
-        userOrg = 'consoleau'
-        name = 'kotlin-jpa-specification-dsl'
-        licenses = ['Apache-2.0']
-        labels = ['kotlin','spring']
-        websiteUrl = "https://github.com/consoleau/${project.name}"
-        issueTrackerUrl = "https://github.com/consoleau/${project.name}/issues"
-        vcsUrl = "https://github.com/consoleau/${project.name}.git"
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
     }
 }
