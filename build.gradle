@@ -10,7 +10,7 @@ plugins {
 group 'au.com.console'
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
