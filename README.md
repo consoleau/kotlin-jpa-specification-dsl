@@ -11,11 +11,11 @@ Hat tip to [Mike Buhot](https://github.com/mbuhot) for the initial implementatio
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
-    compile("au.com.console:kotlin-jpa-specification-dsl:2.0.0")
+    compile("au.com.console:kotlin-jpa-specification-dsl:2.1.0")
 }
 ```
 
